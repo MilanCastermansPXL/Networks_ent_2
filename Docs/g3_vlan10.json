@@ -1,0 +1,13 @@
+{
+    "Cisco-IOS-XE-native:GigabitEthernet": {
+        "name": "3",
+        "switchport": {
+            "mode": {
+                "access": {}
+            },
+            "access": {
+                "vlan": 10
+            }
+        }
+    }
+}
