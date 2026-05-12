@@ -1,6 +1,7 @@
 {
-    "ietf-interfaces:interface": {
-        "name": "GigabitEthernet2",
-        "enabled": false
-    }
+  "ietf-interfaces:interface": {
+    "name": "GigabitEthernet2",
+    "type": "iana-if-type:ethernetCsmacd",
+    "enabled": false
+  }
 }
