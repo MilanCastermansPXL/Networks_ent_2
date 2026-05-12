@@ -1,0 +1,11 @@
+{
+    "Cisco-IOS-XE-native:username": [
+        {
+            "name": "admin2",
+            "privilege": 15,
+            "secret": {
+                "secret": "password123"
+            }
+        }
+    ]
+}
