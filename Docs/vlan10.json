@@ -1,0 +1,10 @@
+{
+    "Cisco-IOS-XE-native:vlan": {
+        "vlan-list": [
+            {
+                "id": 10,
+                "name": "Students"
+            }
+        ]
+    }
+}
