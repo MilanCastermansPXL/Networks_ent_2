@@ -1,6 +1,10 @@
 import requests
 import json
+import urllib3
 
+urllib3.disable_warnings()
+
+# Router info
 router = "https://192.168.1.56"
 auth = ("admin", "cisco123")
 
@@ -9,11 +13,25 @@ headers = {
     "Content-Type": "application/yang-data+json"
 }
 
-# BASE
-router = "https://<your-router-ip>"
+# Function to push config
+def push_config(url, payload):
+    response = requests.put(
+        url,
+        auth=auth,
+        headers=headers,
+        data=json.dumps(payload),
+        verify=False
+    )
 
-# 1. GigabitEthernet1 configuratie
+    print(f"\nURL: {url}")
+    print("STATUS:", response.status_code)
+
+    if response.text:
+        print(response.text)
+
+# 1. GigabitEthernet1
 url = f"{router}/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet1"
+
 payload = {
     "ietf-interfaces:interface": {
         "name": "GigabitEthernet1",
@@ -31,8 +49,11 @@ payload = {
     }
 }
 
-# 2. GigabitEthernet2 disable
+push_config(url, payload)
+
+# 2. Disable GigabitEthernet2
 url = f"{router}/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet2"
+
 payload = {
     "ietf-interfaces:interface": {
         "name": "GigabitEthernet2",
@@ -40,13 +61,16 @@ payload = {
     }
 }
 
-# 3. Loopback0 configuratie
+push_config(url, payload)
+
+# 3. Loopback0
 url = f"{router}/restconf/data/ietf-interfaces:interfaces/interface=Loopback0"
+
 payload = {
     "ietf-interfaces:interface": {
         "name": "Loopback0",
         "type": "iana-if-type:softwareLoopback",
-        "description": "loopback made via RESTCONF",
+        "description": "Loopback via RESTCONF",
         "enabled": True,
         "ietf-ip:ipv4": {
             "address": [
@@ -59,14 +83,20 @@ payload = {
     }
 }
 
-# 4. Hostname instellen
-url = f"{router}/restconf/data/ietf-system:system/hostname"
+push_config(url, payload)
+
+# 4. Hostname
+url = f"{router}/restconf/data/Cisco-IOS-XE-native:native/hostname"
+
 payload = {
-    "ietf-system:hostname": "Router1"
+    "Cisco-IOS-XE-native:hostname": "Router1"
 }
+
+push_config(url, payload)
 
 # 5. Banner MOTD
 url = f"{router}/restconf/data/Cisco-IOS-XE-native:native/banner"
+
 payload = {
     "Cisco-IOS-XE-native:banner": {
         "motd": {
@@ -75,21 +105,13 @@ payload = {
     }
 }
 
-# 6. User authentication
-url = f"{router}/restconf/data/ietf-system:system/authentication/user"
-payload = {
-    "ietf-system:user": [
-        {
-            "name": "admin",
-            "password": "password123"
-        }
-    ]
-}
+push_config(url, payload)
 
-# 7. VLAN 10 aanmaken
+# 6. Create VLAN 10
 url = f"{router}/restconf/data/Cisco-IOS-XE-native:native/vlan"
+
 payload = {
-    "Cisco-IOS-XE-vlan:vlan": {
+    "Cisco-IOS-XE-native:vlan": {
         "vlan-list": [
             {
                 "id": 10,
@@ -99,40 +121,28 @@ payload = {
     }
 }
 
-# 8. Switchport GigabitEthernet3 VLAN assignment
+push_config(url, payload)
+
+# 7. Assign VLAN to GigabitEthernet3
 url = f"{router}/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=3"
+
 payload = {
     "Cisco-IOS-XE-native:GigabitEthernet": {
         "name": "3",
-        "switchport-config": {
-            "switchport": {
-                "mode": {
-                    "access": {}
-                },
-                "access": {
-                    "vlan": {
-                        "vlan": 10
-                    }
-                }
+        "switchport": {
+            "mode": {
+                "access": {}
+            },
+            "access": {
+                "vlan": 10
             }
         }
     }
 }
 
+push_config(url, payload)
 
-
-response = requests.put(
-    url,
-    auth=auth,
-    headers=headers,
-    data=json.dumps(payload),
-    verify=False
-)
-
-print("STATUS CODE:", response.status_code)
-print(response.text)
-
-# 2. OPERATIONAL DATA OPHALEN
+# GET current interfaces
 url_get = f"{router}/restconf/data/ietf-interfaces:interfaces"
 
 response_get = requests.get(
@@ -141,6 +151,5 @@ response_get = requests.get(
     headers=headers,
     verify=False
 )
-
 print("\n--- CURRENT CONFIG ---")
 print(json.dumps(response_get.json(), indent=4))
