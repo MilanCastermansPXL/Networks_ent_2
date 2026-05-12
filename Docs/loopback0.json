@@ -1,0 +1,16 @@
+{
+    "ietf-interfaces:interface": {
+        "name": "Loopback0",
+        "type": "iana-if-type:softwareLoopback",
+        "description": "Loopback made via RESTCONF",
+        "enabled": true,
+        "ietf-ip:ipv4": {
+            "address": [
+                {
+                    "ip": "10.10.1.1",
+                    "netmask": "255.255.255.0"
+                }
+            ]
+        }
+    }
+}
