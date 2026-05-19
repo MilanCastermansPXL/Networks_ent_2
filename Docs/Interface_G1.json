@@ -1,6 +1,6 @@
 {
   "ietf-interfaces:interface": {
-    "name": "GigabitEthernet0/0/1",
+    "name": "GigabitEthernet0/0/0",
     "description": "Configured via RESTCONF",
     "type": "iana-if-type:ethernetCsmacd",
     "enabled": true,
